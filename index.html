@@ -258,7 +258,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         // --- 右下角浮動選單邏輯 ---
         const menuBtn = document.getElementById('strawberryMenuBtn');
         const snsContainer = document.getElementById('snsLinkContainer');
@@ -373,6 +373,39 @@
                 startCarousel();
             });
         });
+
+        // --- 新增：手機板滑動（Swipe）功能 ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // 監聽觸控開始
+        track.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            stopCarousel(); // 使用者滑動時，先暫停自動輪播防止衝突
+        }, { passive: true });
+
+        // 監聽觸控結束
+        track.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        // 判斷滑動方向
+        function handleSwipe() {
+            const swipeThreshold = 50; // 滑動判定門檻（像素），避免輕點誤判
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // 向左滑動 -> 下一張
+                    moveSlide(currentSlide + 1);
+                } else {
+                    // 向右滑動 -> 上一張
+                    moveSlide(currentSlide - 1);
+                }
+            }
+            startCarousel(); // 滑動完畢後恢復自動輪播
+        }
     </script>
 </body>
 </html>
