@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小莓奶糖 COMMISSION</title>
+    <title>COMMISSION</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/cwtexyen.css">
@@ -64,11 +64,11 @@
             box-shadow: 0px 16px 32px rgba(243, 209, 214, 0.5);
             border-left: 3px solid #F3D1D6;
             border-right: 3px solid #F3D1D6;
-            padding-top: 3.5rem;
-            padding-bottom: 3.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
             min-height: 400px;
             @media (min-width: 768px) {
-                min-height: 780px; /* 大幅撐高大卡片容納超大圖 */
+                min-height: 600px; /* 大幅撐高大卡片容納超大圖 */
             }
             display: flex;
             flex-direction: column;
@@ -111,7 +111,9 @@
                 linear-gradient(to left, #F3D1D6 3px, transparent 3px);
         }
 
-        /* 首頁底圖 */
+        /* ========================================================== */
+        /* 首頁底圖響應式調整 */
+        /* ========================================================== */
         .ticket-home-bg {
             position: absolute;
             top: 0;
@@ -120,19 +122,23 @@
             height: 100%;
             background-image: url('https://images.plurk.com/6bgBRsysBN7b9sUuRDzLOX.jpg');
             background-repeat: no-repeat;
-            background-size: 120%; 
-            background-position: -85% 15%; 
             opacity: 0.35;
             z-index: 1;
             border-radius: 4px;
+
+            /* 預設：手機直向版 (Mobile) */
+            background-size: cover;          /* 滿版覆蓋 */
+            background-position: 140px 30%; /* 微調水平與垂直偏移 */
         }
 
-        @media (max-width: 767px) {
+        /* 桌面電腦版 (Desktop寬螢幕) */
+        @media (min-width: 768px) {
             .ticket-home-bg {
-                background-size: 200%;
-                background-position: 80% 20%;
+                background-size: 115%;           /* 電腦版稍微放大 */
+                background-position: 140px 25%;  /* 微調水平與垂直偏移 */
             }
         }
+        /* ========================================================== */
 
         .ticket-content {
             position: relative;
@@ -146,19 +152,12 @@
             display: flex;
             transition: transform 0.5s ease-in-out;
             height: 100%;
-            touch-action: pan-y; /* 允許垂直捲動網頁，但水平滑動交給 JS 處理 */
+            touch-action: pan-y;
         }
         .carousel-slide {
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
-        }
-        
-        /* 關鍵修正：防止 iOS 預設的圖片拖動干擾觸控事件 */
-        .carousel-slide img {
-            -webkit-user-drag: none;
-            user-select: none;
-            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -215,7 +214,7 @@
                 </div>
             </div>
 
-            <div id="page-prices" class="ticket-content w-full hidden flex-col items-center justify-between h-full px-2 md:px-6 relative pointer-events-auto">
+            <div id="page-prices" class="ticket-content w-full hidden flex-col items-center justify-between h-full px-2 md:px-6 relative">
                 <h2 class="text-xl font-bold text-cherry-text mt-1 mb-2 tracking-wider"><i class="fa-solid fa-tags mr-2"></i>價目表展示</h2>
                 
                 <div class="relative w-full overflow-hidden rounded-2xl border border-cherry-border/40 bg-black/5 min-h-[450px] md:min-h-[680px] flex items-center justify-center">
@@ -382,45 +381,41 @@
             });
         });
 
-        // --- 修正版：手機板滑動（Swipe）功能（相容 iOS） ---
+        // --- 手機板滑動（Swipe）功能（相容 iOS 放大） ---
         let touchStartX = 0;
         let touchStartY = 0;
         let touchEndX = 0;
         let touchEndY = 0;
 
-        // 監聽觸控開始
         track.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+            if (e.touches.length > 1) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
             stopCarousel(); 
         }, { passive: true });
 
-        // 監聽觸控結束
         track.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe(e);
+            if (e.touches.length > 0) return;
+            touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
+            handleSwipe();
         }, { passive: true });
 
-        // 判斷滑動方向
-        function handleSwipe(e) {
-            const swipeThreshold = 40; // 降低判定門檻讓滑動更靈敏
+        function handleSwipe() {
+            const swipeThreshold = 50; 
             const diffX = touchStartX - touchEndX;
             const diffY = touchStartY - touchEndY;
 
-            // 確保使用者主要是在做「水平滑動」而不是上下滾動網頁
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0) {
-                        // 向左滑動 -> 下一張
                         moveSlide(currentSlide + 1);
                     } else {
-                        // 向右滑動 -> 上一張
                         moveSlide(currentSlide - 1);
                     }
                 }
             }
-            startCarousel(); // 恢復自動輪播
+            startCarousel(); 
         }
     </script>
 </body>
