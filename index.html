@@ -146,11 +146,19 @@
             display: flex;
             transition: transform 0.5s ease-in-out;
             height: 100%;
+            touch-action: pan-y; /* 允許垂直捲動網頁，但水平滑動交給 JS 處理 */
         }
         .carousel-slide {
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
+        }
+        
+        /* 關鍵修正：防止 iOS 預設的圖片拖動干擾觸控事件 */
+        .carousel-slide img {
+            -webkit-user-drag: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -207,7 +215,7 @@
                 </div>
             </div>
 
-            <div id="page-prices" class="ticket-content w-full hidden flex-col items-center justify-between h-full px-2 md:px-6 relative">
+            <div id="page-prices" class="ticket-content w-full hidden flex-col items-center justify-between h-full px-2 md:px-6 relative pointer-events-auto">
                 <h2 class="text-xl font-bold text-cherry-text mt-1 mb-2 tracking-wider"><i class="fa-solid fa-tags mr-2"></i>價目表展示</h2>
                 
                 <div class="relative w-full overflow-hidden rounded-2xl border border-cherry-border/40 bg-black/5 min-h-[450px] md:min-h-[680px] flex items-center justify-center">
@@ -258,7 +266,7 @@
         </div>
     </div>
 
-<script>
+    <script>
         // --- 右下角浮動選單邏輯 ---
         const menuBtn = document.getElementById('strawberryMenuBtn');
         const snsContainer = document.getElementById('snsLinkContainer');
@@ -374,37 +382,45 @@
             });
         });
 
-        // --- 新增：手機板滑動（Swipe）功能 ---
+        // --- 修正版：手機板滑動（Swipe）功能（相容 iOS） ---
         let touchStartX = 0;
+        let touchStartY = 0;
         let touchEndX = 0;
+        let touchEndY = 0;
 
         // 監聽觸控開始
         track.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
-            stopCarousel(); // 使用者滑動時，先暫停自動輪播防止衝突
+            touchStartY = e.changedTouches[0].screenY;
+            stopCarousel(); 
         }, { passive: true });
 
         // 監聽觸控結束
         track.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe(e);
         }, { passive: true });
 
         // 判斷滑動方向
-        function handleSwipe() {
-            const swipeThreshold = 50; // 滑動判定門檻（像素），避免輕點誤判
-            const diff = touchStartX - touchEndX;
+        function handleSwipe(e) {
+            const swipeThreshold = 40; // 降低判定門檻讓滑動更靈敏
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
 
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    // 向左滑動 -> 下一張
-                    moveSlide(currentSlide + 1);
-                } else {
-                    // 向右滑動 -> 上一張
-                    moveSlide(currentSlide - 1);
+            // 確保使用者主要是在做「水平滑動」而不是上下滾動網頁
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) {
+                        // 向左滑動 -> 下一張
+                        moveSlide(currentSlide + 1);
+                    } else {
+                        // 向右滑動 -> 上一張
+                        moveSlide(currentSlide - 1);
+                    }
                 }
             }
-            startCarousel(); // 滑動完畢後恢復自動輪播
+            startCarousel(); // 恢復自動輪播
         }
     </script>
 </body>
