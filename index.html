@@ -229,12 +229,14 @@
                 
                 <div class="relative w-full overflow-hidden rounded-2xl border border-cherry-border/40 bg-black/5 min-h-[450px] md:min-h-[680px] flex items-center justify-center">
                     <div id="carouselTrack" class="carousel-track w-full">
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/4PJvBHZHVhtFKD0TEHBGJz.png" alt="價目表 0" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/4p4I0N8GDiMGcDICtrdCRZ.jpg" alt="價目表 1" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/6XRWm0mZGEz267aRzKCLUQ.jpg" alt="價目表 2" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/2CG1BxcHq09nygJFbpHSX4.jpg" alt="價目表 3" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/PPAE2LW4jpuS03gH0KVcS.jpg" alt="價目表 4" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/74K68h5ctlifj11rbRmTgf.jpg" alt="價目表 5" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                         <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/3DhUOYOUPaxsVmnM0rcWeS.jpg" alt="價目表 6" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
+                        <div class="carousel-slide flex items-center justify-center"><img src="https://images.plurk.com/4gmMz1DurjcAodGc87Q2pU.png" alt="價目表 7" class="max-w-full md:max-w-[95%] max-h-full object-contain"></div>
                     </div>
                 </div>
 
@@ -252,6 +254,8 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="3"></span>
                     <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="4"></span>
                     <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="5"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="6"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-cherry-border transition-all duration-300 cursor-pointer" data-index="7"></span>
                 </div>
             </div>
         </div>
@@ -335,7 +339,7 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const dots = document.querySelectorAll('#carouselDots span');
-        const totalSlides = 6;
+        const totalSlides = 8;
         let currentSlide = 0;
         let carouselInterval = null;
         const slideDuration = 5000;
